@@ -7,7 +7,7 @@ using VehicleDataSimulator.Application.Services;
 using VehicleDataSimulator.Application.Services.Generators;
 using VehicleDataSimulator.Infrastructure.ExternalServices;
 
-var builder = Host.CreateApplicationBuilder(args);
+var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddHealthChecks();
 
@@ -51,8 +51,8 @@ builder.Services
         pipeline.AddTimeout(TimeSpan.FromSeconds(10));
     });
 
-var host = builder.Build();
+var app = builder.Build();
 
-host.MapHealthChecks("/health");
+app.MapHealthChecks("/health");
 
-host.Run();
+app.Run();

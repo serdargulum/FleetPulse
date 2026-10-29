@@ -7,4 +7,4 @@ ENV PATH="${PATH}:/root/.dotnet/tools"
 
 EXPOSE 8080
 
-CMD ["sh", "-c", "dotnet restore AdminApi.csproj && dotnet watch run --project AdminApi.csproj --no-launch-profile --urls=http://0.0.0.0:8080"]
+CMD ["sh", "-c", "dotnet restore AdminApi.csproj && dotnet build AdminApi.csproj --no-restore -v:diag > /app/build-diag.log 2>&1; dotnet watch run --project AdminApi.csproj --no-launch-profile --urls=http://0.0.0.0:8080"]

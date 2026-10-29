@@ -8,15 +8,9 @@ using AdminApi.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using AdminApi.Domain.Entities;
 using AdminApi.Infrastructure.Middleware;
-using AdminApi.Application.Commands.Auth.Login;
-using AdminApi.Application.Commands.Auth.ForgotPassword;
-using AdminApi.Application.Commands.Auth.ResetPassword;
-using AdminApi.Application.Queries.GetVehicle;
-using AdminApi.Application.Queries.GetDashboard;
 using Microsoft.AspNetCore.RateLimiting;
 using AdminApi.Application.Contracts.Services;
 using AdminApi.Infrastructure.Services;
-using Mediator;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,7 +33,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseNpgsql(connectionString, o =>
     {
-        o.EnableRetryOnFailure();
+        o.EnableRetryOnFailure(
+            maxRetryCount: 3,
+            maxRetryDelay: TimeSpan.FromSeconds(5),
+            errorCodesToAdd: null);
         o.UseNetTopologySuite();
     });
 });
@@ -101,17 +98,16 @@ using (var scope = app.Services.CreateScope())
     {
         if (!await dbContext.Database.CanConnectAsync())
         {
-            throw new InvalidOperationException("CanConnectAsync.");
+            throw new Exception("Cannot connect to PostgreSQL.");
         }
 
         await dbContext.Database.MigrateAsync();
-
         DatabaseSeeder.Seed(dbContext);
     }
     catch (Exception ex)
     {
-        Console.Error.WriteLine(ex.ToString());
-        throw;
+        Console.Error.WriteLine($"Database initialization failed: {ex.GetBaseException().Message}");
+        Environment.ExitCode = 1;
     }
 }
 

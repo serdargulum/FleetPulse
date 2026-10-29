@@ -16,6 +16,11 @@ services:
       - ./Services/Postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - fleetpulse-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   # 2. pgAdmin
   pgadmin:
@@ -29,6 +34,9 @@ services:
     volumes:
       - pgadmin_data:/var/lib/pgadmin
     restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
     networks:
       - fleetpulse-net
 
@@ -44,7 +52,13 @@ services:
       - "15672:15672"
     networks:
       - fleetpulse-net
-
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+      
   # 4. Vehicle Gateway - HTTP API
   vehicle-gateway:
     build:
@@ -63,7 +77,8 @@ services:
       DOTNET_USE_POLLING_FILE_WATCHER: 1
       DOTNET_WATCH_RESTART_ON_RUDE_EDIT: true
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
     volumes:
       - .:/app
     working_dir: /app/Services/VehicleGateway
@@ -88,11 +103,12 @@ services:
       DOTNET_WATCH_RESTART_ON_RUDE_EDIT: true
       ASPNETCORE_URLS: http://+:8080
     volumes:
-      - ./Services/StreamWorker:/app
-    command: dotnet watch run --project StreamWorker.csproj --no-launch-profile
+      - ./Services/StreamWorker:/app 
     depends_on:
-      - rabbitmq
-      - postgres
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
     networks:
       - fleetpulse-net
 
@@ -109,7 +125,8 @@ services:
       DOTNET_USE_POLLING_FILE_WATCHER: 1
       DOTNET_WATCH_RESTART_ON_RUDE_EDIT: true
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     networks:
       - fleetpulse-net
 
@@ -124,6 +141,7 @@ services:
     environment:
       NODE_ENV: development
       NEXT_PUBLIC_API_URL: http://localhost:5001
+      NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}
     volumes:
       - ./Services/admin-dashboard:/app 
       - /app/node_modules
@@ -153,12 +171,12 @@ services:
     volumes:
       - ./Services/AdminApi:/app
       - /app/bin
-      - /app/obj
-    command: dotnet watch run --project AdminApi.csproj --no-launch-profile
+      - /app/obj 
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     networks:
-      - fleetpulse-net
+      - fleetpulse-net 
 
   # 8. Vehicle Simulator - Background Worker
   vehicle-simulator:

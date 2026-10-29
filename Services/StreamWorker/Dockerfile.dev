@@ -5,4 +5,4 @@ WORKDIR /app
 # Veya repodaki tüm yapıyı korumak için doğrudan volume kullanabiliriz.
 EXPOSE 8080
 
-CMD ["sh", "-c", "dotnet restore && dotnet watch run --urls=http://0.0.0.0:8080"]
+CMD ["sh", "-c", "dotnet restore StreamWorker.csproj && dotnet watch run --project StreamWorker.csproj --no-launch-profile"]
