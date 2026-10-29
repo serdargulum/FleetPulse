@@ -1,0 +1,1 @@
+FROM parjom/timescaledb-postgis:latest-pg15-postgis350

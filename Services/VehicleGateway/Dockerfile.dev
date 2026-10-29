@@ -1,0 +1,8 @@
+FROM mcr.microsoft.com/dotnet/sdk:10.0
+WORKDIR /app
+
+# Paketleri önden restore etmek için önce csproj dosyasını kopyalayabiliriz
+# Veya repodaki tüm yapıyı korumak için doğrudan volume kullanabiliriz.
+EXPOSE 8080
+
+CMD ["dotnet", "watch", "run", "--urls=http://0.0.0.0:8080"]

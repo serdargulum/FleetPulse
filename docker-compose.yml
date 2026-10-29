@@ -1,0 +1,193 @@
+services:
+  # 1. PostgreSQL
+  postgres: 
+    build:
+      context: .
+      dockerfile: Services/Postgres/Dockerfile
+    container_name: fleetpulse-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./Services/Postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - fleetpulse-net
+
+  # 2. pgAdmin
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: fleetpulse-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${DEFAULT_PASSWORD}
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    restart: unless-stopped
+    networks:
+      - fleetpulse-net
+
+  # 3. RabbitMQ
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: fleetpulse-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - fleetpulse-net
+
+  # 4. Vehicle Gateway - HTTP API
+  vehicle-gateway:
+    build:
+      context: .
+      dockerfile: Services/VehicleGateway/Dockerfile.dev
+    container_name: fleetpulse-vehicle-gateway
+    ports:
+      - "5000:8080"
+      - "4000:4000"  # TCP GPS
+      - "4001:4001"  # TCP GPS
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      RabbitMQ__HostName: rabbitmq
+      RabbitMQ__User: ${RABBITMQ_USER}
+      RabbitMQ__Password: ${RABBITMQ_PASS}
+      DOTNET_USE_POLLING_FILE_WATCHER: 1
+      DOTNET_WATCH_RESTART_ON_RUDE_EDIT: true
+    depends_on:
+      - rabbitmq
+    volumes:
+      - .:/app
+    working_dir: /app/Services/VehicleGateway
+    networks:
+      - fleetpulse-net
+
+  # 5. Stream Worker
+  stream-worker:
+    build:
+      context: .
+      dockerfile: Services/StreamWorker/Dockerfile.dev
+    container_name: fleetpulse-stream-worker
+    ports:
+      - "5002:8080"
+    environment:
+      DOTNET_ENVIRONMENT: Development
+      RabbitMQ__HostName: rabbitmq
+      RabbitMQ__User: ${RABBITMQ_USER}
+      RabbitMQ__Password: ${RABBITMQ_PASS}
+      ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD} 
+      DOTNET_USE_POLLING_FILE_WATCHER: 1
+      DOTNET_WATCH_RESTART_ON_RUDE_EDIT: true
+      ASPNETCORE_URLS: http://+:8080
+    volumes:
+      - ./Services/StreamWorker:/app
+    command: dotnet watch run --project StreamWorker.csproj --no-launch-profile
+    depends_on:
+      - rabbitmq
+      - postgres
+    networks:
+      - fleetpulse-net
+
+  # 6. Analytics Worker
+  analytics-worker:
+    build:
+      context: .
+      dockerfile: Services/AnalyticsWorker/Dockerfile
+    container_name: fleetpulse-analytics-worker
+    ports:
+      - "5003:8080"
+    environment:
+      DOTNET_ENVIRONMENT: Development
+      DOTNET_USE_POLLING_FILE_WATCHER: 1
+      DOTNET_WATCH_RESTART_ON_RUDE_EDIT: true
+    depends_on:
+      - postgres
+    networks:
+      - fleetpulse-net
+
+  # 7. Admin Dashboard - Nextjs
+  admin-dashboard:
+    build:
+      context: .
+      dockerfile: Services/admin-dashboard/Dockerfile.dev
+    container_name: fleetpulse-admin-dashboard
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      NEXT_PUBLIC_API_URL: http://localhost:5001
+    volumes:
+      - ./Services/admin-dashboard:/app 
+      - /app/node_modules
+    command: npm run dev
+    depends_on:
+      - admin-api
+    networks:
+      - fleetpulse-net
+
+  # 7. Admin Api Api - MVC
+  admin-api:
+    build:
+      context: .
+      dockerfile: Services/AdminApi/Dockerfile.dev
+    container_name: fleetpulse-admin-api
+    ports:
+      - "5001:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      DOTNET_USE_POLLING_FILE_WATCHER: 1
+      DOTNET_WATCH_RESTART_ON_RUDE_EDIT: true
+      Email__SmtpHost: smtp.gmail.com
+      Email__SmtpPort: 587
+      Email__Username: ${EMAIL_USERNAME}
+      Email__Password: ${EMAIL_PASSWORD}
+      ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
+    volumes:
+      - ./Services/AdminApi:/app
+      - /app/bin
+      - /app/obj
+    command: dotnet watch run --project AdminApi.csproj --no-launch-profile
+    depends_on:
+      - postgres
+    networks:
+      - fleetpulse-net
+
+  # 8. Vehicle Simulator - Background Worker
+  vehicle-simulator:
+    build:
+      context: .
+      dockerfile: Services/VehicleDataSimulator/Dockerfile.dev
+    container_name: fleetpulse-vehicle-simulator
+    environment:
+      DOTNET_ENVIRONMENT: Development
+      GatewaySettings__BaseUrl: http://vehicle-gateway:8080
+      DOTNET_USE_POLLING_FILE_WATCHER: 1
+      DOTNET_WATCH_RESTART_ON_RUDE_EDIT: true
+    volumes:
+      - ./Services/VehicleDataSimulator:/app
+      - /app/bin
+      - /app/obj
+    working_dir: /app
+    command: dotnet watch run --project VehicleDataSimulator.csproj --no-launch-profile
+    depends_on:
+      - vehicle-gateway
+    restart: always
+    networks:
+      - fleetpulse-net
+
+volumes:
+  postgres_data:
+  pgadmin_data:
+    driver: local
+
+networks:
+  fleetpulse-net:
+    driver: bridge

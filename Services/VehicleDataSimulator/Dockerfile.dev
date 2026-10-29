@@ -1,0 +1,15 @@
+# Sadece SDK imajı yeterlidir, çünkü build ve watch işlemini konteyner içinde yapıyoruz
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+WORKDIR /src
+
+# Proje dosyasını kopyalayıp bağımlılıkları yüklüyoruz
+COPY ["Services/VehicleDataSimulator/VehicleDataSimulator.csproj", "Services/VehicleDataSimulator/"]
+RUN dotnet restore "Services/VehicleDataSimulator/VehicleDataSimulator.csproj"
+
+# Kodun tamamını kopyalıyoruz
+COPY . .
+WORKDIR "/src/Services/VehicleDataSimulator"
+
+# Yayınlama (publish) yapmıyoruz. 
+# Artık ENTRYPOINT olarak doğrudan dotnet watch çalıştırabiliriz:
+ENTRYPOINT ["dotnet", "watch", "run", "--no-launch-profile", "--", "--environment=Development"]

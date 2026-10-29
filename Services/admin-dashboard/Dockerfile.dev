@@ -1,0 +1,13 @@
+FROM node:22-alpine
+
+WORKDIR /app
+
+COPY Services/admin-dashboard/package*.json ./
+
+RUN npm install
+
+COPY Services/admin-dashboard/ ./
+
+EXPOSE 3000
+
+CMD ["npm", "run", "dev"]

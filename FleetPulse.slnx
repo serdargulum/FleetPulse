@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/Services/">
+    <Project Path="Services/VehicleDataSimulator/VehicleDataSimulator.csproj" />
+    <Project Path="Services/VehicleGateway/VehicleGateway.csproj" />
+    <Project Path="Services/StreamWorker/StreamWorker.csproj" />
+    <Project Path="Services/AdminApi/AdminApi.csproj" />
+    <Project Path="Services/AnalyticsWorker/AnalyticsWorker.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/AdminApi.Tests/AdminApi.Tests.csproj" />
+    <Project Path="tests/StreamWorker.Tests/StreamWorker.Tests.csproj" />
+    <Project Path="tests/VehicleDataSimulator.Tests/VehicleDataSimulator.Tests.csproj" />
+    <Project Path="tests/VehicleGateway.Tests/VehicleGateway.Tests.csproj" />
+  </Folder>
+</Solution>

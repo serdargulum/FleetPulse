@@ -1,0 +1,76 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: #fdfdfd;
+  --foreground: #18181b;
+  --card: #ffffff;
+  --border: #e4e4e7;
+  --box-bg: #ffffff;
+  --box-border: rgba(24, 24, 27, 0.1);
+  --light-border-color: rgba(24, 24, 27, 0.15);
+}
+
+
+.dark {
+  --background: #09090b;
+  --foreground: #f4f4f5;
+  --card: #18181b;
+  --border: #27272a;
+  --box-bg: #18181b;
+  --box-border: rgba(244, 244, 245, 0.15);
+  --light-border-color: rgba(244, 244, 245, 0.15);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-border: var(--border);
+}
+
+body {
+  background: var(--background);
+  font-family: var(--font-instrument-sans), sans-serif;
+  color: var(--foreground);
+  margin: 15px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2 {
+  text-transform: uppercase;
+}
+
+.box {
+  border: 1px solid var(--box-border);
+  border-radius: 0;
+  padding: 15px;
+  background: var(--box-bg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.license-plate {
+  display: inline-block;
+  padding: 2px 10px;
+  min-width: 90px;
+  text-align: center;
+  font-weight: 700;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  letter-spacing: 1px;
+  color: var(--foreground);
+  background: var(--background);
+  border: 1.5px solid var(--light-border-color);
+  white-space: nowrap;
+}
+
+.license-plate:hover {
+  background: var(--foreground);
+  color: var(--background);
+}
+
+.primary-color {
+  color: lab(63.7053 60.745 31.3109)
+}

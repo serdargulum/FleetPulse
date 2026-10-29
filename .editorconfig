@@ -1,0 +1,10 @@
+root = true
+
+[*.cs]
+indent_style = space
+indent_size = 4
+end_of_line = lf
+insert_final_newline = true
+
+# if/for/while için süslü parantez zorunlu
+csharp_prefer_braces = true:warning

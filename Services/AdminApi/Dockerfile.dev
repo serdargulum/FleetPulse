@@ -1,0 +1,10 @@
+FROM mcr.microsoft.com/dotnet/sdk:10.0
+
+WORKDIR /app
+
+RUN dotnet tool install --global dotnet-ef
+ENV PATH="${PATH}:/root/.dotnet/tools"
+
+EXPOSE 8080
+
+CMD ["sh", "-c", "dotnet restore AdminApi.csproj && dotnet watch run --project AdminApi.csproj --no-launch-profile --urls=http://0.0.0.0:8080"]
