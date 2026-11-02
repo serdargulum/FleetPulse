@@ -39,7 +39,7 @@ public class VehicleDataWorker(ILogger<VehicleDataWorker> logger, IServiceProvid
                 }
             }
 
-            await Task.Delay(TimeSpan.FromSeconds(0.2), stoppingToken);
+            await Task.Delay(TimeSpan.FromSeconds(0.05), stoppingToken);
         }
 
         logger.LogInformation("Servis güvenli bir şekilde durduruldu.");

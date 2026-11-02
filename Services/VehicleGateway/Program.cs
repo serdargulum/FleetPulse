@@ -41,7 +41,7 @@ builder.Services.AddRateLimiter(options =>
             partitionKey: plate,
             factory: _ => new FixedWindowRateLimiterOptions
             {
-                PermitLimit = 6,          // 1 dakikada izin verilen maksimum istek (Her 10 saniyede 1 istek)
+                PermitLimit = 60,          // 1 dakikada izin verilen maksimum istek 
                 Window = TimeSpan.FromMinutes(1), // Zaman penceresi
                 QueueLimit = 2,
                 QueueProcessingOrder = QueueProcessingOrder.OldestFirst
