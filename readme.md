@@ -7,11 +7,15 @@ FleetPulse is a .NET 10 microservices-based platform for ingesting, processing, 
 The project demonstrates distributed systems concepts through asynchronous messaging, manufacturer-specific parsing, real-time updates, persistent storage, and background analytics.
 
 <p align="center">
-  <img src="images/dashboard.png" width="48%" alt="FleetPulse dashboard" />
-  <img src="images/vehicle-page.png" width="48%" alt="FleetPulse vehicle details" />
+  <img src="images/dashboard.png" width="40%" alt="FleetPulse dashboard" />
+  <img src="images/vehicle-page.png" width="40%" alt="FleetPulse vehicle details" />
 </p>
 
-[![Video Başlığı](images/youtube-placeholder.png)](https://www.youtube.com/watch?v=bAA6xZj2KZc)
+<p align="center">
+<a href="https://www.youtube.com/watch?v=bAA6xZj2KZc">
+  <img src="images/youtube-placeholder.png" width="40%">
+</a>
+</p>
 
 ## Architecture
 
