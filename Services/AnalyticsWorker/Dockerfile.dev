@@ -1,0 +1,12 @@
+FROM mcr.microsoft.com/dotnet/sdk:10.0
+
+WORKDIR /app
+
+# Sadece csproj kopyala → restore cache için
+COPY Services/AnalyticsWorker/AnalyticsWorker.csproj ./
+RUN dotnet restore AnalyticsWorker.csproj
+
+# Kaynak kodu kopyala (volume bunu ezecek ama image tek başına da çalışsın)
+COPY Services/AnalyticsWorker/ ./
+
+CMD ["dotnet", "watch", "run", "--no-launch-profile"]

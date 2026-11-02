@@ -70,6 +70,7 @@ services:
       - "4000:4000"  # TCP GPS
       - "4001:4001"  # TCP GPS
     environment:
+      ASPNETCORE_URLS: http://+:8080
       ASPNETCORE_ENVIRONMENT: Development
       RabbitMQ__HostName: rabbitmq
       RabbitMQ__User: ${RABBITMQ_USER}
@@ -80,8 +81,10 @@ services:
       rabbitmq:
         condition: service_healthy
     volumes:
-      - .:/app
-    working_dir: /app/Services/VehicleGateway
+      - ./Services/VehicleGateway:/app
+      - /app/bin
+      - /app/obj
+    working_dir: /app
     networks:
       - fleetpulse-net
 
@@ -104,6 +107,9 @@ services:
       ASPNETCORE_URLS: http://+:8080
     volumes:
       - ./Services/StreamWorker:/app 
+      - /app/bin
+      - /app/obj
+    working_dir: /app
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -116,14 +122,20 @@ services:
   analytics-worker:
     build:
       context: .
-      dockerfile: Services/AnalyticsWorker/Dockerfile
+      dockerfile: Services/AnalyticsWorker/Dockerfile.dev
     container_name: fleetpulse-analytics-worker
     ports:
       - "5003:8080"
     environment:
+      ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD} 
       DOTNET_ENVIRONMENT: Development
       DOTNET_USE_POLLING_FILE_WATCHER: 1
       DOTNET_WATCH_RESTART_ON_RUDE_EDIT: true
+    volumes:
+      - ./Services/AnalyticsWorker:/app 
+      - /app/bin
+      - /app/obj
+    working_dir: /app
     depends_on:
       postgres:
         condition: service_healthy
