@@ -87,7 +87,7 @@ export default function VehiclePage() {
         <div className="space-y-6">
             <VehicleHeader data={data} />
 
-            <VehicleKpiCards data={data} />
+            <VehicleKpiCards data={slicedData} />
 
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                 <TelemetryChart telemetries={slicedData} isBroadcasting={isBroadcasting} />

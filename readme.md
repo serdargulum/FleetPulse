@@ -12,7 +12,7 @@ The project demonstrates distributed systems concepts through asynchronous messa
 </p>
 
 <p align="center">
-<a href="https://www.youtube.com/watch?v=bAA6xZj2KZc">
+<a href="https://www.youtube.com/watch?v=GbtoD71uNpI">
   <img src="images/youtube-placeholder.png" width="40%">
 </a>
 </p>
