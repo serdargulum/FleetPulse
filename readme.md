@@ -11,6 +11,8 @@ The project demonstrates distributed systems concepts through asynchronous messa
   <img src="images/vehicle-page.png" width="48%" alt="FleetPulse vehicle details" />
 </p>
 
+[![Video Başlığı](images/youtube-placeholder.png)](https://www.youtube.com/watch?v=bAA6xZj2KZc)
+
 ## Architecture
 
 ![FleetPulse Architecture](images/architecture-diagram.drawio.svg)
