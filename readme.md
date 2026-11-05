@@ -48,7 +48,7 @@ The development environment uses Docker Compose to run the application services 
 2. Generate synthetic vehicle telemetry using the Vehicle Simulator.
 3. Follow the ingestion and asynchronous processing pipeline.
 4. Inspect vehicle data and real-time updates in the dashboard.
-5. Explore persisted telemetry and the Analytics Worker.
+5. Inspect persisted telemetry and explore the available service interfaces.
 
 *The available demo flow depends on the services and features enabled in the current configuration.*
 
@@ -70,77 +70,17 @@ Use the development credentials configured in your local  `.env` file
 
 ## Core Design Decisions
 
-### 1. Fast Ingestion, Asynchronous Processing
+- **Microservices Architecture:** Separate services for telemetry ingestion, processing, analytics, and administration.
+- **Asynchronous Processing:** RabbitMQ decouples telemetry ingestion from downstream processing.
+- **Manufacturer-Aware Processing:** Manufacturer-specific parsers handle different telemetry payload formats.
+- **Vehicle-Based Parser Resolution:** Parser selection is resolved through vehicle registry information.
+- **Time-Series and Geospatial Storage:** PostgreSQL with TimescaleDB and PostGIS supports telemetry and location data.
+- **Real-Time Communication:** SignalR delivers live telemetry updates to the dashboard.
+- **Vehicle Simulation:** A dedicated simulator generates telemetry data for development and testing.
+- **Database Access and Schema Management:** EF Core handles schema migrations through AdminApi, while StreamWorker uses direct SQL with Npgsql for high-throughput telemetry persistence.
+- **AI-Driven Telemetry Analytics:** AnalyticsWorker uses AI to analyze fuel consumption and vehicle movement patterns, identifying inconsistencies in telemetry data. Its commercial implementation is not included in the public repository.
 
-The Vehicle Gateway accepts telemetry over HTTP and publishes incoming messages to RabbitMQ. The Stream Worker handles parsing, normalization, validation, persistence, and real-time processing asynchronously.
-
-```text
-HTTP Request → Vehicle Gateway → RabbitMQ → Stream Worker
-```
-
-This separates ingestion from downstream processing, allowing the system to absorb processing backlogs without requiring the Gateway to perform every operation synchronously.
-
-### 2. Preserve Raw Payloads
-
-Different manufacturers expose different payload structures. The Gateway forwards raw telemetry rather than converting every payload into a shared DTO.
-
-```text
-Manufacturer JSON → RabbitMQ → Stream Worker → UnifiedTelemetryDto
-```
-
-This keeps manufacturer-specific parsing concerns out of the ingestion layer.
-
-### 3. Manufacturer-Specific Parsers
-
-The Stream Worker uses `IVehicleDataParser` to isolate differences between manufacturer payloads.
-
-```csharp
-public interface IVehicleDataParser
-{
-    string VehicleType { get; }
-    UnifiedTelemetryDto Generate(JsonElement data);
-}
-```
-
-Current parser implementations:
-
-- BMW — `BmwVehiclePayload`
-- Honda — `HondaVehiclePayload`
-- Mazda — `MazdaVehiclePayload`
-- Toyota — `ToyotaVehiclePayload`
-
-Each parser converts its supported payload format into a normalized telemetry model.
-
-### 4. Vehicle-Based Parser Resolution
-
-The vehicle registry provides the manufacturer information used during parser resolution.
-
-```text
-Incoming Telemetry
-       ↓
-Vehicle Identifier
-       ↓
-Vehicles Table
-       ↓
-Brand / Model Metadata
-       ↓
-Parser Resolution
-       ↓
-UnifiedTelemetryDto
-```
-
-The vehicle registry acts as the source of truth for manufacturer information during telemetry processing.
-
-### 5. Database Access and Schema Management
-
-AdminApi manages PostgreSQL schema migrations using Entity Framework Core. StreamWorker uses direct SQL with Npgsql for telemetry persistence to minimize ORM overhead in the high-throughput ingestion path.
-
-Given the limited number of data models and straightforward persistence requirements, direct SQL provides explicit query control without introducing unnecessary ORM complexity.
-
-PostgreSQL extensions:
-
-- **TimescaleDB** — `TelemetryRecords` is configured as a hypertable partitioned by `RecordedAt`. Time-based chunks are managed automatically, supporting efficient time-range queries as telemetry volume grows.
-- **PostGIS** — Geographic coordinates are stored in a single `Location` column using the `geography(Point, 4326)` type, enabling spatial queries and distance calculations.
+Detailed architectural decisions, including their context, rationale, and consequences, are documented in [Architecture Decision Records (ADRs)](docs/adr/README.md).
 
 ## Services
 
@@ -148,7 +88,7 @@ PostgreSQL extensions:
 |---|---|---|
 | `vehicle-gateway` | Telemetry ingestion | HTTP / RabbitMQ |
 | `stream-worker` | Real-time processing and normalization | RabbitMQ / PostgreSQL / SignalR (WebSocket/HTTP) |
-| `analytics-worker` | Historical and batch analytics | PostgreSQL |
+| `analytics-worker` | AI-driven analysis of fuel consumption and vehicle movement patterns | PostgreSQL |
 | `admin-dashboard` | Operational data and management UI | HTTP |
 | `admin-api` | Management endpoints and database access | HTTP / PostgreSQL |
 | `vehicle-simulator` | Synthetic telemetry generation | HTTP |
@@ -170,7 +110,7 @@ PostgreSQL extensions:
 
 FleetPulse is a portfolio project focused on demonstrating .NET, C#, distributed systems, and microservice architecture.
 
-The current implementation provides the core ingestion → messaging → normalization → persistence pipeline, together with simulation, analytical processing, real-time updates, and administrative access.
+The project currently provides the core ingestion → messaging → normalization → persistence pipeline, together with vehicle simulation, real-time updates, and administrative access. The Analytics Worker is included in the public architecture, while its commercial AI-driven analytics implementation remains private. 
 
 The project is intentionally scoped as a technical showcase rather than a complete commercial fleet management product.
 
