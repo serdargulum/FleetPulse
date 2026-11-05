@@ -21,7 +21,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Services\AdminApi\AdminApi.csproj" />
+    <ProjectReference Include="../../Services/AdminApi/AdminApi.Domain/AdminApi.Domain.csproj" />
+    <ProjectReference Include="../../Services/AdminApi/AdminApi.Application/AdminApi.Application.csproj" />
+    <ProjectReference Include="../../Services/AdminApi/AdminApi.Infrastructure/AdminApi.Infrastructure.csproj" />
+    <ProjectReference Include="../../Services/AdminApi/AdminApi.Api/AdminApi.Api.csproj" />
   </ItemGroup>
 
 </Project>

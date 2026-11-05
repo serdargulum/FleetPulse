@@ -3,8 +3,13 @@
     <Project Path="Services/VehicleDataSimulator/VehicleDataSimulator.csproj" />
     <Project Path="Services/VehicleGateway/VehicleGateway.csproj" />
     <Project Path="Services/StreamWorker/StreamWorker.csproj" />
-    <Project Path="Services/AdminApi/AdminApi.csproj" />
     <Project Path="Services/AnalyticsWorker/AnalyticsWorker.csproj" />
+  </Folder>
+  <Folder Name="/Services/AdminApi/">
+    <Project Path="Services/AdminApi/AdminApi.Api/AdminApi.Api.csproj" />
+    <Project Path="Services/AdminApi/AdminApi.Application/AdminApi.Application.csproj" />
+    <Project Path="Services/AdminApi/AdminApi.Domain/AdminApi.Domain.csproj" />
+    <Project Path="Services/AdminApi/AdminApi.Infrastructure/AdminApi.Infrastructure.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/AdminApi.Tests/AdminApi.Tests.csproj" />

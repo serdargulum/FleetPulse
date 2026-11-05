@@ -7,7 +7,7 @@ using AdminApi.Application.Common.Security;
 using AdminApi.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using AdminApi.Domain.Entities;
-using AdminApi.Infrastructure.Middleware;
+using AdminApi.Api.Middleware;
 using Microsoft.AspNetCore.RateLimiting;
 using AdminApi.Application.Contracts.Services;
 using AdminApi.Infrastructure.Services;

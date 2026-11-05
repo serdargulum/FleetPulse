@@ -8,7 +8,7 @@ using Mediator;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AdminApi.Controllers;
+namespace AdminApi.Api.Controllers;
 
 [ApiController]
 [Route("api/auth")]

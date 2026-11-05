@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace AdminApi.Migrations
+namespace AdminApi.Infrastructure.Migrations
 {
     /// <inheritdoc />
     public partial class ConvertTelemetryToHypertable : Migration

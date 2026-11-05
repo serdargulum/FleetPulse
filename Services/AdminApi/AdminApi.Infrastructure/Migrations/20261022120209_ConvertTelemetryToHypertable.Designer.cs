@@ -10,11 +10,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace AdminApi.Migrations
+namespace AdminApi.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20261022123629_RemoveLatitudeLongitude")]
-    partial class RemoveLatitudeLongitude
+    [Migration("20261022120209_ConvertTelemetryToHypertable")]
+    partial class ConvertTelemetryToHypertable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -111,8 +111,16 @@ namespace AdminApi.Migrations
                     b.Property<double>("FuelLevel")
                         .HasColumnType("double precision");
 
+                    b.Property<decimal>("Latitude")
+                        .HasPrecision(10, 8)
+                        .HasColumnType("numeric(10,8)");
+
                     b.Property<Point>("Location")
                         .HasColumnType("geography(Point,4326)");
+
+                    b.Property<decimal>("Longitude")
+                        .HasPrecision(11, 8)
+                        .HasColumnType("numeric(11,8)");
 
                     b.Property<decimal>("Speed")
                         .HasPrecision(5, 2)

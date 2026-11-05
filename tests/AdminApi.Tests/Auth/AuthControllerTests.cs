@@ -1,7 +1,7 @@
 
 using System.Security.Claims;
 using AdminApi.Application.Commands.Auth.Login;
-using AdminApi.Controllers;
+using AdminApi.Api.Controllers;
 using Mediator;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;

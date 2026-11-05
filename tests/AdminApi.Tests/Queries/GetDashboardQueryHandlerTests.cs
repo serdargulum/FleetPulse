@@ -4,6 +4,7 @@ using AdminApi.Application.Queries.GetDashboard;
 using AdminApi.Domain.Entities;
 using Moq;
 using Xunit;
+using NetTopologySuite.Geometries;
 
 namespace AdminApi.Tests.Queries;
 
@@ -130,8 +131,7 @@ public class GetDashboardQueryHandlerTests
         var position = new TelemetryRecord
         {
             Vehicle = new Vehicle { Plate = "34XYZ789" },
-            Latitude = 41.0082m,
-            Longitude = 28.9784m
+            Location = new Point(28.9784, 41.0082) { SRID = 4326 }
         };
 
         SetupRepositories([], [alert], [position]);

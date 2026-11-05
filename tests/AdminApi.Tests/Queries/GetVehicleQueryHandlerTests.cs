@@ -5,6 +5,7 @@ using AdminApi.Application.Queries.GetVehicle;
 using AdminApi.Domain.Entities;
 using Moq;
 using Xunit;
+using NetTopologySuite.Geometries;
 
 namespace AdminApi.Tests.Queries;
 
@@ -65,8 +66,7 @@ public class GetVehicleQueryHandlerTests
         {
             Id = Guid.NewGuid(),
             VehicleId = vehicleId,
-            Latitude = 41.0082m,
-            Longitude = 28.9784m,
+            Location = new Point(28.9784, 41.0082) { SRID = 4326 },
             Speed = 60,
             EngineTemperature = 90,
             FuelLevel = 75,

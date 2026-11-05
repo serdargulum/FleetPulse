@@ -10,11 +10,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace AdminApi.Migrations
+namespace AdminApi.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20261022120209_ConvertTelemetryToHypertable")]
-    partial class ConvertTelemetryToHypertable
+    [Migration("20261022120033_UpdateTelemetryPrimaryKey")]
+    partial class UpdateTelemetryPrimaryKey
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

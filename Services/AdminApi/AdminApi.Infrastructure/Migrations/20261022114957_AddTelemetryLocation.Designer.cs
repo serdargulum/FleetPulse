@@ -10,11 +10,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace AdminApi.Migrations
+namespace AdminApi.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20261022120033_UpdateTelemetryPrimaryKey")]
-    partial class UpdateTelemetryPrimaryKey
+    [Migration("20261022114957_AddTelemetryLocation")]
+    partial class AddTelemetryLocation
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -99,10 +99,8 @@ namespace AdminApi.Migrations
             modelBuilder.Entity("AdminApi.Domain.Entities.TelemetryRecord", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
-
-                    b.Property<DateTime>("RecordedAt")
-                        .HasColumnType("timestamp with time zone");
 
                     b.Property<decimal>("EngineTemperature")
                         .HasPrecision(5, 2)
@@ -122,6 +120,9 @@ namespace AdminApi.Migrations
                         .HasPrecision(11, 8)
                         .HasColumnType("numeric(11,8)");
 
+                    b.Property<DateTime>("RecordedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<decimal>("Speed")
                         .HasPrecision(5, 2)
                         .HasColumnType("numeric(5,2)");
@@ -129,7 +130,7 @@ namespace AdminApi.Migrations
                     b.Property<Guid>("VehicleId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("Id", "RecordedAt");
+                    b.HasKey("Id");
 
                     b.HasIndex("RecordedAt");
 

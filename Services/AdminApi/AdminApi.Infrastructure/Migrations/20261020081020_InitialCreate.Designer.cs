@@ -5,16 +5,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace AdminApi.Migrations
+namespace AdminApi.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20261022114957_AddTelemetryLocation")]
-    partial class AddTelemetryLocation
+    [Migration("20261020081020_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,7 +23,6 @@ namespace AdminApi.Migrations
                 .HasAnnotation("ProductVersion", "10.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "postgis");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("AdminApi.Domain.Entities.BatchAnomaly", b =>
@@ -112,9 +110,6 @@ namespace AdminApi.Migrations
                     b.Property<decimal>("Latitude")
                         .HasPrecision(10, 8)
                         .HasColumnType("numeric(10,8)");
-
-                    b.Property<Point>("Location")
-                        .HasColumnType("geography(Point,4326)");
 
                     b.Property<decimal>("Longitude")
                         .HasPrecision(11, 8)

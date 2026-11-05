@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http;
 
-namespace AdminApi.Infrastructure.Middleware;
+namespace AdminApi.Api.Middleware;
 
 public class ExceptionHandlingMiddleware(RequestDelegate _next, ILogger<ExceptionHandlingMiddleware> logger)
 {

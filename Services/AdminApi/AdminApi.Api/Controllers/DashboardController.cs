@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 
-namespace AdminApi.Controllers;
+namespace AdminApi.Api.Controllers;
 
 [ApiController]
 [Route("api/dashboard")]
